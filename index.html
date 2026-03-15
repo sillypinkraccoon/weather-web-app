@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Window Finder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Window Finder</h1>
+    <p class="tagline">Find dry walking windows for your dog</p>
+
+    <div class="search">
+      <input
+        type="text"
+        id="zipInput"
+        placeholder="Enter ZIP code"
+        maxlength="5"
+        inputmode="numeric"
+      />
+      <button id="searchBtn">Find Windows</button>
+    </div>
+
+    <div id="error" class="error" hidden></div>
+
+    <div id="results" hidden>
+      <div class="location-info">
+        <span id="locationName"></span>
+        <span id="currentTemp"></span>
+      </div>
+
+      <section id="nextWindow">
+        <h2>Next dry window</h2>
+        <p id="nextWindowTime" class="window-time primary"></p>
+      </section>
+
+      <p id="afterWindow" class="no-windows" hidden></p>
+
+      <section id="moreWindows" hidden>
+        <h2>More dry windows today</h2>
+        <ul id="windowList"></ul>
+      </section>
+
+      <p id="noWindows" class="no-windows" hidden>
+        No dry windows remain for the rest of today. 🐾 Check back tomorrow!
+      </p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -8,8 +8,8 @@ Enter a US zip code and Window Finder will:
 
 - Show the **current temperature** (°F) for your location
 - Display the **next consecutive dry window** — the next block of hours where precipitation probability stays under 15%
-- List any **additional dry windows** remaining later in the day
-- Show a clear message if **no dry windows** exist for the rest of today
+- List any **additional dry windows** in the next 24 hours
+- Show a clear message if **no dry windows** exist in the next 24 hours
 
 ## How to use it
 

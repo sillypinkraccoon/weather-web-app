@@ -22,9 +22,9 @@ This is a single-page vanilla JS app with no framework, bundler, or dependencies
 
 1. `handleSearch()` validates the zip, then calls `geocodeZip()` → `fetchWeather()` → `render()`
 2. `geocodeZip(zip)` hits `https://api.zippopotam.us/us/{zip}` to get lat/lon/city/state — no API key needed
-3. `fetchWeather(lat, lon)` hits `https://api.open-meteo.com/v1/forecast` for hourly `precipitation_probability` and `temperature_2m` (Fahrenheit, `forecast_days=1`, `timezone=auto`) — no API key needed
-4. `render()` uses `weather.utc_offset_seconds` from the Open-Meteo response to find the current hour index, then scans remaining hours for consecutive blocks where precip < 15% (`DRY_THRESHOLD`). Results are written into pre-existing DOM elements by toggling their `hidden` attribute.
+3. `fetchWeather(lat, lon)` hits `https://api.open-meteo.com/v1/forecast` for hourly `precipitation_probability` and `temperature_2m` (Fahrenheit, `forecast_days=2`, `timezone=auto`) — no API key needed. Two days are fetched so there is always a full 24-hour lookahead regardless of time of day.
+4. `render()` uses `weather.utc_offset_seconds` from the Open-Meteo response to find the current hour index, then slices exactly 24 entries (`startIdx` to `startIdx + 24`) to form a rolling window. Results are written into pre-existing DOM elements by toggling their `hidden` attribute.
 
-**Dry window logic:** A "window" is a consecutive run of hours with `precipitation_probability < 15`. The first window is shown prominently as "Next dry window". If only one window exists, an `afterWindow` message notes no windows remain after it. If no windows exist at all, `noWindows` is shown.
+**Dry window logic:** A "window" is a consecutive run of hours with `precipitation_probability < 15`. The first window is shown prominently as "Next dry window". If only one window exists, an `afterWindow` message notes no windows remain in the next 24 hours. If no windows exist at all, `noWindows` is shown.
 
-**Time handling:** Open-Meteo returns ISO timestamps in the location's local time (no `Z` suffix), so they are safe to parse directly with `new Date()` for display. The current hour is found by converting `Date.now()` using `utc_offset_seconds`.
+**Time handling:** Open-Meteo returns ISO timestamps in the location's local time (no `Z` suffix), so they are safe to parse directly with `new Date()` for display. The current hour is found by converting `Date.now()` using `utc_offset_seconds`. `formatHour()` and `getWindowEndLabel()` both accept a `todayStr` (`"YYYY-MM-DD"`) and append `(tomorrow)` to any time that falls on the next calendar day.

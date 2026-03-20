@@ -57,7 +57,7 @@ async function fetchWeather(lat, lon) {
   url.searchParams.set('hourly', 'precipitation_probability,temperature_2m');
   url.searchParams.set('temperature_unit', 'fahrenheit');
   url.searchParams.set('timezone', 'auto');
-  url.searchParams.set('forecast_days', '1');
+  url.searchParams.set('forecast_days', '2');
 
   const res = await fetch(url);
   if (!res.ok) throw new Error('Could not fetch weather data. Please try again.');
@@ -76,10 +76,11 @@ function render(city, state, weather) {
   let startIdx = time.findIndex((t) => t.startsWith(currentHourStr));
   if (startIdx === -1) startIdx = 0;
 
-  // Slice to remaining hours of the day
-  const remainingTimes = time.slice(startIdx);
-  const remainingPrecip = precip.slice(startIdx);
-  const remainingTemps = temps.slice(startIdx);
+  // Slice to the next 24 hours (rolling window)
+  const remainingTimes = time.slice(startIdx, startIdx + 24);
+  const remainingPrecip = precip.slice(startIdx, startIdx + 24);
+  const remainingTemps = temps.slice(startIdx, startIdx + 24);
+  const todayStr = currentHourStr.slice(0, 10); // "YYYY-MM-DD"
 
   // Current temperature
   const currentTemp = Math.round(remainingTemps[0]);
@@ -113,20 +114,20 @@ function render(city, state, weather) {
   } else {
     noWindowsEl.hidden = true;
     nextWindowEl.hidden = false;
-    nextWindowTimeEl.textContent = formatWindow(windows[0]);
+    nextWindowTimeEl.textContent = formatWindow(windows[0], todayStr);
 
     if (windows.length > 1) {
       windowListEl.innerHTML = '';
       windows.slice(1).forEach((w) => {
         const li = document.createElement('li');
-        li.textContent = formatWindow(w);
+        li.textContent = formatWindow(w, todayStr);
         windowListEl.appendChild(li);
       });
       moreWindowsEl.hidden = false;
       afterWindowEl.hidden = true;
     } else {
       moreWindowsEl.hidden = true;
-      afterWindowEl.textContent = `After ${getWindowEndLabel(windows[0])}, no dry windows remain today.`;
+      afterWindowEl.textContent = `After ${getWindowEndLabel(windows[0], todayStr)}, no dry windows remain in the next 24 hours.`;
       afterWindowEl.hidden = false;
     }
   }
@@ -134,20 +135,25 @@ function render(city, state, weather) {
   resultsEl.hidden = false;
 }
 
-function getWindowEndLabel(win) {
+function getWindowEndLabel(win, todayStr) {
   const endDate = new Date(win.times[win.endIdx]);
   endDate.setHours(endDate.getHours() + 1);
-  return endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const label = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  // Check if the end hour falls on the next calendar day
+  const endIso = win.times[win.endIdx];
+  const endDateStr = endIso.slice(0, 10);
+  return endDateStr !== todayStr ? `${label} (tomorrow)` : label;
 }
 
-function formatWindow(win) {
-  return `${formatHour(win.times[win.startIdx])} – ${getWindowEndLabel(win)}`;
+function formatWindow(win, todayStr) {
+  return `${formatHour(win.times[win.startIdx], todayStr)} – ${getWindowEndLabel(win, todayStr)}`;
 }
 
-function formatHour(isoStr) {
+function formatHour(isoStr, todayStr) {
   // ISO string from Open-Meteo is local time (no Z), safe to parse as-is
   const d = new Date(isoStr);
-  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return isoStr.slice(0, 10) !== todayStr ? `${label} (tomorrow)` : label;
 }
 
 function setLoading(loading) {

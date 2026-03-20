@@ -72,6 +72,7 @@ function render(city, state, weather) {
   const tzOffset = weather.utc_offset_seconds * 1000;
   const localNow = new Date(nowMs + tzOffset);
   const currentHourStr = localNow.toISOString().slice(0, 13); // "YYYY-MM-DDTHH"
+  const currentMinute = localNow.getUTCMinutes();
 
   let startIdx = time.findIndex((t) => t.startsWith(currentHourStr));
   if (startIdx === -1) startIdx = 0;
@@ -82,8 +83,10 @@ function render(city, state, weather) {
   const remainingTemps = temps.slice(startIdx, startIdx + 24);
   const todayStr = currentHourStr.slice(0, 10); // "YYYY-MM-DD"
 
-  // Current temperature
-  const currentTemp = Math.round(remainingTemps[0]);
+  // If we're 30+ minutes into the current hour, the next hour's reading
+  // is closer to actual current conditions than the current hour's slot.
+  const tempOffset = currentMinute >= 30 ? 1 : 0;
+  const currentTemp = Math.round(remainingTemps[tempOffset]);
   locationNameEl.textContent = `${city}, ${state}`;
   currentTempEl.textContent = `${currentTemp}°F`;
 

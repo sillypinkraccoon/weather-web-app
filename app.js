@@ -1,3 +1,5 @@
+let precipChart = null;
+
 const zipInput = document.getElementById('zipInput');
 const searchBtn = document.getElementById('searchBtn');
 const errorEl = document.getElementById('error');
@@ -135,7 +137,57 @@ function render(city, state, weather) {
     }
   }
 
+  renderChart(remainingTimes, remainingPrecip);
   resultsEl.hidden = false;
+}
+
+function renderChart(times, precip) {
+  const labels = times.map((t) => {
+    const d = new Date(t + 'Z');
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
+  });
+
+  const barColors = precip.map((p) => (p < 15 ? '#4299e1' : '#fc8181'));
+
+  if (precipChart) precipChart.destroy();
+
+  precipChart = new Chart(document.getElementById('precipChart'), {
+    data: {
+      labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Precip %',
+          data: precip,
+          backgroundColor: barColors,
+          borderRadius: 3,
+          order: 2,
+        },
+        {
+          type: 'line',
+          label: 'Dry threshold',
+          data: new Array(24).fill(15),
+          borderColor: '#e53e3e',
+          borderWidth: 1.5,
+          borderDash: [4, 3],
+          pointRadius: 0,
+          order: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y}%` } },
+      },
+      scales: {
+        y: { min: 0, max: 50, ticks: { stepSize: 5, callback: (v) => `${v}%` } },
+        x: { ticks: { maxRotation: 45, minRotation: 45 } },
+      },
+    },
+  });
 }
 
 function getWindowEndLabel(win, todayStr) {

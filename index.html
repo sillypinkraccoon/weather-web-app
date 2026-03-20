@@ -35,6 +35,13 @@
         <p id="nextWindowTime" class="window-time primary"></p>
       </section>
 
+      <section id="chartSection">
+        <h2>Next 24 hours</h2>
+        <div class="chart-container">
+          <canvas id="precipChart"></canvas>
+        </div>
+      </section>
+
       <p id="afterWindow" class="no-windows" hidden></p>
 
       <section id="moreWindows" hidden>
@@ -48,6 +55,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -1,3 +1,20 @@
+:root {
+  --bg:             #0f1923;
+  --surface:        #1a2a35;
+  --surface-2:      #243344;
+  --border:         #2e4155;
+  --accent:         #e8a045;
+  --accent-dim:     #b87d32;
+  --text-1:         #f0e8d8;
+  --text-2:         #8fa8bc;
+  --dry-color:      #5ba4d4;
+  --wet-color:      #e07070;
+  --success:        #5db87a;
+  --warning-bg:     #2a1f10;
+  --warning-border: #6b4010;
+  --warning-text:   #e8a045;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -5,9 +22,12 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f0f4f8;
-  color: #2d3748;
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(232, 160, 69, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(91, 164, 212, 0.05) 0%, transparent 60%);
+  color: var(--text-1);
   min-height: 100vh;
   display: flex;
   align-items: flex-start;
@@ -16,23 +36,24 @@ body {
 }
 
 .container {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   padding: 2.5rem 2rem;
   width: 100%;
   max-width: 480px;
 }
 
 h1 {
-  font-size: 2rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #1a365d;
+  color: var(--text-1);
   letter-spacing: -0.5px;
 }
 
 .tagline {
-  color: #718096;
+  color: var(--text-2);
   margin-top: 0.25rem;
   font-size: 0.95rem;
 }
@@ -47,22 +68,30 @@ h1 {
   flex: 1;
   padding: 0.65rem 1rem;
   font-size: 1rem;
-  border: 2px solid #cbd5e0;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
   border-radius: 8px;
+  color: var(--text-1);
   outline: none;
   transition: border-color 0.15s;
 }
 
+#zipInput::placeholder {
+  color: var(--text-2);
+}
+
 #zipInput:focus {
-  border-color: #4299e1;
+  border-color: var(--accent);
 }
 
 #searchBtn {
   padding: 0.65rem 1.25rem;
   font-size: 1rem;
-  font-weight: 600;
-  background: #4299e1;
-  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  background: var(--accent);
+  color: #0f1923;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -71,26 +100,33 @@ h1 {
 }
 
 #searchBtn:hover {
-  background: #3182ce;
+  background: var(--accent-dim);
 }
 
 #searchBtn:disabled {
-  background: #a0aec0;
+  background: var(--border);
+  color: var(--text-2);
   cursor: not-allowed;
 }
 
 .error {
   margin-top: 1.25rem;
   padding: 0.75rem 1rem;
-  background: #fff5f5;
-  border: 1px solid #fed7d7;
+  background: rgba(224, 112, 112, 0.1);
+  border: 1px solid rgba(224, 112, 112, 0.3);
   border-radius: 8px;
-  color: #c53030;
+  color: var(--wet-color);
   font-size: 0.9rem;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 #results {
   margin-top: 2rem;
+  animation: fadeUp 0.3s ease forwards;
 }
 
 .location-info {
@@ -98,20 +134,20 @@ h1 {
   justify-content: space-between;
   align-items: baseline;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
   margin-bottom: 1.5rem;
 }
 
 #locationName {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--text-1);
 }
 
 #currentTemp {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2b6cb0;
+  color: var(--accent);
 }
 
 section {
@@ -119,23 +155,23 @@ section {
 }
 
 h2 {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #718096;
+  letter-spacing: 0.12em;
+  color: var(--text-2);
   margin-bottom: 0.5rem;
 }
 
 .window-time {
   font-size: 1rem;
-  color: #2d3748;
+  color: var(--text-1);
 }
 
 .window-time.primary {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #276749;
+  color: var(--success);
 }
 
 #windowList {
@@ -146,15 +182,16 @@ h2 {
 }
 
 #windowList li {
-  font-size: 1rem;
-  color: #4a5568;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid #f7fafc;
+  background: var(--surface-2);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-2);
 }
 
 #windowList li::before {
   content: "• ";
-  color: #68d391;
+  color: var(--accent);
   font-weight: 700;
 }
 
@@ -166,10 +203,10 @@ h2 {
 }
 
 .no-windows {
-  font-size: 1rem;
-  color: #744210;
-  background: #fffaf0;
-  border: 1px solid #fbd38d;
+  font-size: 0.95rem;
+  color: var(--warning-text);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
   border-radius: 8px;
   padding: 0.75rem 1rem;
 }

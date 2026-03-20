@@ -147,7 +147,7 @@ function renderChart(times, precip) {
     return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
   });
 
-  const barColors = precip.map((p) => (p < 15 ? '#4299e1' : '#fc8181'));
+  const barColors = precip.map((p) => (p < 15 ? '#5ba4d4' : '#e07070'));
 
   if (precipChart) precipChart.destroy();
 
@@ -167,7 +167,7 @@ function renderChart(times, precip) {
           type: 'line',
           label: 'Dry threshold',
           data: new Array(24).fill(15),
-          borderColor: '#e53e3e',
+          borderColor: '#e8a045',
           borderWidth: 1.5,
           borderDash: [4, 3],
           pointRadius: 0,
@@ -180,11 +180,25 @@ function renderChart(times, precip) {
       maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y}%` } },
+        tooltip: {
+          backgroundColor: '#1a2a35',
+          titleColor: '#f0e8d8',
+          bodyColor: '#8fa8bc',
+          borderColor: '#2e4155',
+          borderWidth: 1,
+          callbacks: { label: (ctx) => `${ctx.parsed.y}%` },
+        },
       },
       scales: {
-        y: { min: 0, max: 50, ticks: { stepSize: 5, callback: (v) => `${v}%` } },
-        x: { ticks: { maxRotation: 45, minRotation: 45 } },
+        y: {
+          min: 0, max: 50,
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#8fa8bc', stepSize: 5, callback: (v) => `${v}%` },
+        },
+        x: {
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#8fa8bc', maxRotation: 45, minRotation: 45 },
+        },
       },
     },
   });

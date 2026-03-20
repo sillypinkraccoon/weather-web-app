@@ -158,6 +158,13 @@ h2 {
   font-weight: 700;
 }
 
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin-top: 0.5rem;
+}
+
 .no-windows {
   font-size: 1rem;
   color: #744210;

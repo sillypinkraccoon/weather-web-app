@@ -139,12 +139,20 @@ function render(city, state, weather) {
 }
 
 function getWindowEndLabel(win, todayStr) {
-  const endDate = new Date(win.times[win.endIdx]);
-  endDate.setHours(endDate.getHours() + 1);
-  const label = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  // Check if the end hour falls on the next calendar day
-  const endIso = win.times[win.endIdx];
-  const endDateStr = endIso.slice(0, 10);
+  const endIso = win.times[win.endIdx]; // e.g. "2026-03-19T23:00"
+  let endHour = parseInt(endIso.slice(11, 13), 10) + 1;
+  let endDateStr = endIso.slice(0, 10);
+
+  if (endHour >= 24) {
+    endHour = 0;
+    const d = new Date(endDateStr + 'T12:00:00Z'); // noon UTC avoids DST edge cases
+    d.setUTCDate(d.getUTCDate() + 1);
+    endDateStr = d.toISOString().slice(0, 10);
+  }
+
+  // Append Z and use timeZone:'UTC' so the browser's local offset never interferes
+  const display = new Date(`${endDateStr}T${String(endHour).padStart(2, '0')}:00:00Z`);
+  const label = display.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
   return endDateStr !== todayStr ? `${label} (tomorrow)` : label;
 }
 
@@ -153,9 +161,9 @@ function formatWindow(win, todayStr) {
 }
 
 function formatHour(isoStr, todayStr) {
-  // ISO string from Open-Meteo is local time (no Z), safe to parse as-is
-  const d = new Date(isoStr);
-  const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  // Append Z and use timeZone:'UTC' so the browser's local offset never interferes
+  const d = new Date(isoStr + 'Z');
+  const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
   return isoStr.slice(0, 10) !== todayStr ? `${label} (tomorrow)` : label;
 }
 

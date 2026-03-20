@@ -10,6 +10,7 @@ Enter a US zip code and Window Finder will:
 - Display the **next consecutive dry window** — the next block of hours where precipitation probability stays under 15%
 - List any **additional dry windows** in the next 24 hours
 - Show a clear message if **no dry windows** exist in the next 24 hours
+- Display a **24-hour bar chart** of precipitation probability — blue bars for dry hours, red bars for wet hours, with a dashed threshold line at 15%
 
 ## How to use it
 
@@ -35,5 +36,6 @@ Just open `index.html` directly:
 |---|---|---|
 | [Zippopotam.us](https://api.zippopotam.us) | Converts US zip code to latitude/longitude and city name | None |
 | [Open-Meteo](https://open-meteo.com) | Fetches hourly precipitation probability and temperature forecast | None |
+| [Chart.js](https://www.chartjs.org) (CDN) | Renders the precipitation bar chart | None |
 
-Both APIs are free and require no API key.
+Both weather APIs are free and require no API key. Chart.js is loaded from jsDelivr CDN.

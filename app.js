@@ -56,7 +56,7 @@ async function fetchWeather(lat, lon) {
   const url = new URL('https://api.open-meteo.com/v1/forecast');
   url.searchParams.set('latitude', lat);
   url.searchParams.set('longitude', lon);
-  url.searchParams.set('hourly', 'precipitation_probability,temperature_2m');
+  url.searchParams.set('hourly', 'precipitation_probability,temperature_2m,weather_code');
   url.searchParams.set('temperature_unit', 'fahrenheit');
   url.searchParams.set('timezone', 'auto');
   url.searchParams.set('forecast_days', '2');
@@ -66,8 +66,23 @@ async function fetchWeather(lat, lon) {
   return res.json();
 }
 
+function getWeatherEmoji(code) {
+  if (code === 0)                          return '☀️';
+  if (code === 1)                          return '🌤️';
+  if (code === 2)                          return '⛅';
+  if (code === 3)                          return '☁️';
+  if (code === 45 || code === 48)          return '🌫️';
+  if (code >= 51 && code <= 57)            return '🌦️';
+  if (code >= 61 && code <= 67)            return '🌧️';
+  if (code >= 71 && code <= 77)            return '🌨️';
+  if (code >= 80 && code <= 82)            return '🌧️';
+  if (code === 85 || code === 86)          return '🌨️';
+  if (code >= 95 && code <= 99)            return '⛈️';
+  return '🌡️';
+}
+
 function render(city, state, weather) {
-  const { time, precipitation_probability: precip, temperature_2m: temps } = weather.hourly;
+  const { time, precipitation_probability: precip, temperature_2m: temps, weather_code: codes } = weather.hourly;
 
   // Find the current hour index using the API's reported timezone offset
   const nowMs = Date.now();
@@ -89,8 +104,9 @@ function render(city, state, weather) {
   // is closer to actual current conditions than the current hour's slot.
   const tempOffset = currentMinute >= 30 ? 1 : 0;
   const currentTemp = Math.round(remainingTemps[tempOffset]);
+  const weatherEmoji = getWeatherEmoji(codes[startIdx + tempOffset]);
   locationNameEl.textContent = `${city}, ${state}`;
-  currentTempEl.textContent = `${currentTemp}°F`;
+  currentTempEl.textContent = `${weatherEmoji} ${currentTemp}°F`;
 
   // Build dry windows (consecutive blocks where precip < 15%)
   const DRY_THRESHOLD = 15;
